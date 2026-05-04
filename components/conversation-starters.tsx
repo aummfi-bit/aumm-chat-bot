@@ -10,6 +10,7 @@ export const CONVERSATION_STARTERS = [
   "What is der Bodensee Pool and how does that affect the $AuMM price and the overall incentive APY?",
   "Liquidity provision in DeFi is widely seen as high-risk for low return — what makes LPing on aumm.fi different?",
   "How does the CCB mechanism play an anti-cyclical and anti-FOMO dampening role?",
+  "How does Reserve Protocol (reserve.org) stand to benefit from Aureum's dual-anchor liquidity design, with Sagix Club Edelweiss's ixEDEL DTF serving as a major cross-pool routing anchor (alongside svZCHF)?",
 ] as const;
 
 type ConversationStartersProps = {
@@ -26,7 +27,7 @@ export function ConversationStarters({
       <p className="mb-2 text-sm font-semibold text-foreground">
         Try these conversation starters:
       </p>
-      <ul className="flex flex-col gap-0.5 sm:gap-1">
+      <ul className="flex flex-col gap-0 sm:gap-0.5">
         {CONVERSATION_STARTERS.map((line) => (
           <li key={line}>
             <Button
@@ -34,7 +35,7 @@ export function ConversationStarters({
               variant="ghost"
               disabled={disabled}
               onClick={() => onSelect(line)}
-              className="h-auto min-h-0 w-full justify-start whitespace-normal rounded-md px-2.5 py-1.5 text-left text-sm font-medium leading-snug text-foreground hover:bg-background/80 hover:text-foreground border border-transparent hover:border-border/80 disabled:opacity-60"
+              className="h-auto min-h-0 w-full justify-start whitespace-normal rounded-md px-2.5 py-1 text-left text-sm font-medium leading-snug text-foreground hover:bg-background/80 hover:text-foreground border border-transparent hover:border-border/80 disabled:opacity-60"
             >
               <span className="mr-1.5 shrink-0 self-start pt-0.5">–</span>
               <span className="leading-snug">{line}</span>
