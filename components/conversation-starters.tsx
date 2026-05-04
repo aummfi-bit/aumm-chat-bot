@@ -22,11 +22,11 @@ export function ConversationStarters({
   disabled,
 }: ConversationStartersProps) {
   return (
-    <div className="mb-4 w-full text-left border border-border/60 rounded-xl bg-secondary/40 px-4 py-4 sm:px-5">
-      <p className="mb-3 text-base font-bold text-foreground">
+    <div className="mb-4 w-full text-left border border-border/60 rounded-xl bg-secondary/40 px-4 py-3 sm:px-5 sm:py-3.5">
+      <p className="mb-2 text-sm font-semibold text-foreground">
         Try these conversation starters:
       </p>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-0.5 sm:gap-1">
         {CONVERSATION_STARTERS.map((line) => (
           <li key={line}>
             <Button
@@ -34,10 +34,10 @@ export function ConversationStarters({
               variant="ghost"
               disabled={disabled}
               onClick={() => onSelect(line)}
-              className="h-auto w-full justify-start whitespace-normal rounded-lg px-3 py-2.5 text-left text-base font-bold text-foreground hover:bg-background/80 hover:text-foreground border border-transparent hover:border-border/80 disabled:opacity-60"
+              className="h-auto min-h-0 w-full justify-start whitespace-normal rounded-md px-2.5 py-1.5 text-left text-sm font-medium leading-snug text-foreground hover:bg-background/80 hover:text-foreground border border-transparent hover:border-border/80 disabled:opacity-60"
             >
-              <span className="mr-2 shrink-0">–</span>
-              <span>{line}</span>
+              <span className="mr-1.5 shrink-0 self-start pt-0.5">–</span>
+              <span className="leading-snug">{line}</span>
             </Button>
           </li>
         ))}
