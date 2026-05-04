@@ -26,6 +26,7 @@ export function formatStreamChatError(error: unknown, modelHint?: string): strin
     );
     if (modelHint?.includes("gemini")) tagParts.unshift("gemini.route");
     if (modelHint?.startsWith?.("gateway-")) tagParts.unshift("gateway.route");
+    if (modelHint?.startsWith?.("openrouter-")) tagParts.unshift("openrouter.route");
     const tag = tagParts.filter(Boolean).join(".") || "provider";
 
     const bodyHint = shortenResponseBodySnippet(error.responseBody);
@@ -67,6 +68,7 @@ function providerTagPieces(url: string): string[] {
   const tags: string[] = [];
   if (/generativelanguage|googleapis.*generative/.test(u)) tags.push("google");
   if (/groq/i.test(u)) tags.push("groq");
+  if (/openrouter\.ai/i.test(u)) tags.push("openrouter");
   if (/ai-gateway|vercel\.sh\/v1\/ai/i.test(u)) tags.push("gateway");
   return tags;
 }

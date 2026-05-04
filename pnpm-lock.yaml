@@ -17,6 +17,9 @@ importers:
       '@ai-sdk/groq':
         specifier: 2.0.0-beta.6
         version: 2.0.0-beta.6(zod@3.25.76)
+      '@ai-sdk/openai':
+        specifier: 2.0.0-beta.11
+        version: 2.0.0-beta.11(zod@3.25.76)
       '@ai-sdk/provider-utils':
         specifier: ^3.0.25
         version: 3.0.25(zod@3.25.76)
@@ -140,6 +143,12 @@ packages:
 
   '@ai-sdk/groq@2.0.0-beta.6':
     resolution: {integrity: sha512-75JecBSVRMpEderzSOPd3cjr9rWNJMiw+Em/GEOdRItxEn7WQ/vLObn/dJGRxf55/xlkXG6ROAXV9VkgQlBdUQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+
+  '@ai-sdk/openai@2.0.0-beta.11':
+    resolution: {integrity: sha512-HQXUMb1V6Xr8EBYvEDwNb8ISyRqyxg2zUst7lzPb6s1nGDKJRBTfSyytNWRL9dZ9vxjM2wK34cltCfZbjaHpAA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -4001,6 +4010,12 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.0-beta.5(zod@3.25.76)
       zod: 3.25.76
 
+  '@ai-sdk/openai@2.0.0-beta.11(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@ai-sdk/provider-utils': 3.0.0-beta.5(zod@3.25.76)
+      zod: 3.25.76
+
   '@ai-sdk/provider-utils@1.0.22(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 0.0.26
@@ -4022,7 +4037,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
       '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.3
+      eventsource-parser: 3.0.8
       zod: 3.25.76
       zod-to-json-schema: 3.24.5(zod@3.25.76)
 

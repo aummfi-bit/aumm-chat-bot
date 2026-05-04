@@ -80,6 +80,9 @@ function shortStatusForModel(opt: ModelsApiPayload["options"][number]): string {
     if (opt.note === "Groq" || opt.note?.startsWith("Groq")) {
       return "Groq";
     }
+    if (opt.note?.includes("OpenRouter")) {
+      return "OpenRouter · key set";
+    }
     return "Ready";
   }
   if (opt.requirement === "GROQ_API_KEY") {
@@ -87,6 +90,9 @@ function shortStatusForModel(opt: ModelsApiPayload["options"][number]): string {
   }
   if (opt.requirement === "GOOGLE_GENERATIVE_AI_API_KEY") {
     return "needs GOOGLE_GENERATIVE_AI_API_KEY";
+  }
+  if (opt.requirement === "OPENROUTER_API_KEY") {
+    return "needs OPENROUTER_API_KEY";
   }
   return opt.requirement ?? "Unavailable";
 }

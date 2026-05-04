@@ -4,6 +4,10 @@ import {
   GEMINI_2_5_FLASH_LITE,
   LLAMA_3_3_70B_VERSATILE,
   META_LLAMA_4_SCOUT,
+  OPENROUTER_GEMMA_4_31B,
+  OPENROUTER_GPT_OSS_120B,
+  OPENROUTER_MINIMAX_M25,
+  OPENROUTER_NEMOTRON_3_SUPER,
   type modelID,
 } from "@/ai/providers";
 import type { ProviderOptions } from "@ai-sdk/provider-utils";
@@ -97,6 +101,15 @@ export function getModelProfile(id: modelID): ModelProfile {
       };
     case GATEWAY_OPENAI_GPT54:
     case GATEWAY_ANTHROPIC_HAIKU:
+      return {
+        id,
+        stopWhen: stepCountIs(8),
+        toolChoiceForStep: defaultToolChoiceForStep,
+      };
+    case OPENROUTER_GEMMA_4_31B:
+    case OPENROUTER_GPT_OSS_120B:
+    case OPENROUTER_NEMOTRON_3_SUPER:
+    case OPENROUTER_MINIMAX_M25:
       return {
         id,
         stopWhen: stepCountIs(8),

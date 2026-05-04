@@ -6,6 +6,11 @@ import {
   LLAMA_3_3_70B_VERSATILE,
   META_LLAMA_4_SCOUT,
   MODEL_OPTIONS_UI,
+  OPENROUTER_GEMMA_4_31B,
+  OPENROUTER_GPT_OSS_120B,
+  OPENROUTER_MINIMAX_M25,
+  OPENROUTER_NEMOTRON_3_SUPER,
+  openRouterReady,
   type modelID,
 } from "@/ai/providers";
 
@@ -43,6 +48,21 @@ function describeModel(id: modelID): Pick<
         : {
             available: false,
             requirement: "GOOGLE_GENERATIVE_AI_API_KEY",
+          };
+    }
+    case OPENROUTER_GEMMA_4_31B:
+    case OPENROUTER_GPT_OSS_120B:
+    case OPENROUTER_NEMOTRON_3_SUPER:
+    case OPENROUTER_MINIMAX_M25: {
+      const ok = openRouterReady();
+      return ok
+        ? {
+            available: true,
+            note: "OpenRouter (`OPENROUTER_API_KEY` present)",
+          }
+        : {
+            available: false,
+            requirement: "OPENROUTER_API_KEY",
           };
     }
     case GATEWAY_OPENAI_GPT54:

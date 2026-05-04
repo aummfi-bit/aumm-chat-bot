@@ -34,9 +34,12 @@ After deploying, add the server-side API keys in Vercel under **Project Settings
 GROQ_API_KEY=""
 GOOGLE_GENERATIVE_AI_API_KEY=""
 AI_GATEWAY_API_KEY=""
+OPENROUTER_API_KEY=""
 ```
 
-`GROQ_API_KEY` powers the default Llama models, `GOOGLE_GENERATIVE_AI_API_KEY` powers Gemini, and `AI_GATEWAY_API_KEY` powers the premium AI Gateway models. Do not prefix these values with `NEXT_PUBLIC_`.
+`GROQ_API_KEY` powers the Groq Llama models, `GOOGLE_GENERATIVE_AI_API_KEY` powers Gemini, `OPENROUTER_API_KEY` enables the **free OpenRouter** routes in the model picker (Gemma 4 31B, gpt-oss-120b, Nemotron 3 Super, MiniMax M2.5 — routed via `@ai-sdk/openai` to `https://openrouter.ai/api/v1`), and `AI_GATEWAY_API_KEY` powers the premium AI Gateway models. Do not prefix these values with `NEXT_PUBLIC_`.
+
+Optional for OpenRouter rankings/attribution: `OPENROUTER_HTTP_REFERER` (your site URL) and `OPENROUTER_APP_TITLE` (defaults to `Aureum Chat`).
 
 ## Running Locally
 
