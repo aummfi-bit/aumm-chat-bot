@@ -1,5 +1,7 @@
 "use client";
-import { modelID, MODELS } from "@/ai/providers";
+
+import type { ModelsApiPayload } from "@/lib/models-contract";
+import { MODEL_OPTIONS_UI, defaultModel, type modelID } from "@/ai/providers";
 import {
   Select,
   SelectContent,
@@ -8,29 +10,129 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { useEffect, useMemo, useState } from "react";
 
 interface ModelPickerProps {
   selectedModel: modelID;
   setSelectedModel: (model: modelID) => void;
 }
 
+function optimisticFallback(): ModelsApiPayload["options"] {
+  return MODEL_OPTIONS_UI().map(({ id, label }) => ({
+    id,
+    label,
+    available: true,
+    note: "Provisioning not verified (network error — check env on server)",
+  }));
+}
+
+function subtitleLine(opt: ModelsApiPayload["options"][number]): string {
+  if (opt.available) {
+    return opt.note ?? "Ready — credential check passed.";
+  }
+  return `Unavailable — ${opt.requirement ?? "needs server configuration"}`;
+}
+
 export const ModelPicker = ({
   selectedModel,
   setSelectedModel,
 }: ModelPickerProps) => {
+  const [loadedOptions, setLoadedOptions] = useState<
+    ModelsApiPayload["options"] | null
+  >(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/models")
+      .then(async (res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json() as Promise<ModelsApiPayload>;
+      })
+      .then((data) => {
+        if (cancelled || !Array.isArray(data.options) || data.options.length === 0)
+          return;
+        setLoadedOptions(data.options);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoadedOptions(optimisticFallback());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const loadingScan = MODEL_OPTIONS_UI().map(({ id, label }) => ({
+    id,
+    label,
+    available: true as const,
+    note: "Checking server credential status…",
+  }));
+
+  /** Before first network result: scan UI. After fetch: server truth / optimistic fallback rows. */
+  const displayChoices = loadedOptions ?? loadingScan;
+
+  const firstSelectableId = useMemo((): modelID => {
+    const hit = displayChoices.find((c) => c.available);
+    return (hit?.id ?? defaultModel) as modelID;
+  }, [displayChoices]);
+
+  const selectedResolvable = displayChoices.some(
+    (c) => c.id === selectedModel && c.available === true,
+  );
+
+  useEffect(() => {
+    if (selectedResolvable) return;
+    if (selectedModel !== firstSelectableId) setSelectedModel(firstSelectableId);
+  }, [selectedResolvable, selectedModel, firstSelectableId, setSelectedModel]);
+
+  const controlledValue = selectedResolvable ? selectedModel : firstSelectableId;
+
   return (
-    <div className="absolute bottom-2 left-2 flex flex-col gap-2">
-      <Select value={selectedModel} onValueChange={setSelectedModel}>
-        <SelectTrigger className="">
+    <div className="absolute bottom-2 left-2 flex flex-col gap-2 max-w-[min(100vw-2rem,460px)]">
+      <Select
+        value={controlledValue}
+        onValueChange={(v) => setSelectedModel(v as modelID)}
+      >
+        <SelectTrigger className="min-w-[14rem] max-w-[min(100vw-3rem,32rem)] h-auto py-2 text-left whitespace-normal [&_[data-slot=select-value]]:whitespace-normal">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="min-w-[min(100vw-2rem,460px)] max-h-[70vh]">
           <SelectGroup>
-            {MODELS.map((modelId) => (
-              <SelectItem key={modelId} value={modelId}>
-                {modelId}
-              </SelectItem>
-            ))}
+            {displayChoices.map((choice) => {
+              const sub = subtitleLine(choice);
+              const muted =
+                choice.available === false || sub.includes("Unavailable");
+              const pendingScan =
+                choice.note === "Checking server credential status…";
+              /** During scan all rows stay clickable; definitive server false disables Gemini/Gateway/etc. */
+              const disabled =
+                pendingScan ? false : choice.available !== true;
+
+              return (
+                <SelectItem
+                  key={choice.id}
+                  value={choice.id}
+                  disabled={disabled}
+                  textValue={`${choice.label} ${sub}`}
+                >
+                  <div className="flex flex-col gap-0.5 py-1 pr-6 max-w-[min(100vw-4rem,28rem)]">
+                    <span className="text-sm leading-snug whitespace-normal">
+                      {choice.label}
+                    </span>
+                    <span
+                      className={
+                        muted
+                          ? "text-xs text-amber-600 dark:text-amber-400 leading-snug whitespace-normal"
+                          : "text-xs text-muted-foreground leading-snug whitespace-normal"
+                      }
+                    >
+                      {sub}
+                    </span>
+                  </div>
+                </SelectItem>
+              );
+            })}
           </SelectGroup>
         </SelectContent>
       </Select>

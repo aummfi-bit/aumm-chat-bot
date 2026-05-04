@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, VT323 } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeClassSync } from "@/components/theme-class-sync";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const vt323 = VT323({
+  weight: "400",
+  variable: "--font-vt323",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Vercel x Groq Chatbot",
+  title: "Aureum chat",
   description:
-    "This starter project uses Groq with the AI SDK via the Vercel Marketplace",
+    "Assistant grounded in the canonical Aureum skill corpus (aumm-skill). Official protocol docs at https://aumm.fi.",
 };
 
 export default function RootLayout({
@@ -25,12 +28,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${vt323.variable} ${inter.variable} antialiased font-sans`}
       >
-        {children}
-        <Toaster />
+        <ThemeProvider>
+          <ThemeClassSync />
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

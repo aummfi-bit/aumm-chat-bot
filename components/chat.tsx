@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { useState } from "react";
 import { Textarea } from "./textarea";
 import { ProjectOverview } from "./project-overview";
+import { ConversationStarters } from "./conversation-starters";
 import { Messages } from "./messages";
 import { Header } from "./header";
 import { toast } from "sonner";
@@ -14,35 +15,50 @@ export default function Chat() {
   const [selectedModel, setSelectedModel] = useState<modelID>(defaultModel);
   const { sendMessage, messages, status, stop } = useChat({
     onError: (error) => {
-      toast.error(
-        error.message.length > 0
+      console.error("[useChat] transport / stream error:", error);
+      const messageText =
+        typeof error?.message === "string" && error.message.trim().length > 0
           ? error.message
-          : "An error occured, please try again later.",
-        { position: "top-center", richColors: true },
-      );
+          : "An error occurred. Check the browser console for details.";
+      toast.error(messageText, {
+        position: "top-center",
+        richColors: true,
+      });
     },
   });
 
   const isLoading = status === "streaming" || status === "submitted";
 
   return (
-    <div className="h-dvh flex flex-col justify-center w-full stretch">
+    <div className="flex h-dvh w-full flex-col pt-16">
       <Header />
-      {messages.length === 0 ? (
-        <div className="max-w-xl mx-auto w-full">
-          <ProjectOverview />
-        </div>
-      ) : (
-        <Messages messages={messages} isLoading={isLoading} status={status} />
-      )}
+      <div className="flex min-h-0 flex-1 flex-col">
+        {messages.length === 0 ? (
+          <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
+            <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
+              <ProjectOverview />
+            </div>
+          </div>
+        ) : (
+          <Messages messages={messages} isLoading={isLoading} status={status} />
+        )}
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           sendMessage({ text: input }, { body: { selectedModel } });
           setInput("");
         }}
-        className="pb-8 bg-white dark:bg-black w-full max-w-xl mx-auto px-4 sm:px-0"
+        className="mx-auto w-full max-w-7xl shrink-0 bg-background px-4 pb-8 sm:px-8 pt-3"
       >
+        {messages.length === 0 && (
+          <ConversationStarters
+            disabled={isLoading}
+            onSelect={(text) =>
+              sendMessage({ text }, { body: { selectedModel } })
+            }
+          />
+        )}
         <Textarea
           selectedModel={selectedModel}
           setSelectedModel={setSelectedModel}

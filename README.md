@@ -17,7 +17,7 @@
 ## Features
 
 - Streaming text responses powered by the [AI SDK by Vercel](https://sdk.vercel.ai/docs), allowing multiple AI providers to be used interchangeably with just a few lines of code.
-- Built-in tool integration for extending AI capabilities (demonstrated with a weather tool example).
+- Answers grounded in [Project Aureum](https://aumm.fi) via the canonical [`aummfi-bit/aumm-skill`](https://github.com/aummfi-bit/aumm-skill) git submodule (`vendor/aumm-skill`): the model reads numbered specs through a `readAummReference` tool.
 - Reasoning model support.
 - [shadcn/ui](https://ui.shadcn.com/) components for a modern, responsive UI powered by [Tailwind CSS](https://tailwindcss.com).
 - Built with the latest [Next.js](https://nextjs.org) App Router.
@@ -30,7 +30,18 @@ You can deploy your own version to Vercel by clicking the button below:
 
 ## Running Locally
 
-1. Clone the repository and install dependencies:
+1. Clone the repository **with submodules** (required — canon lives in `vendor/aumm-skill`) and install dependencies:
+
+   ```bash
+   git clone --recurse-submodules https://github.com/<your-org>/aumm-chat-bot.git
+   cd aumm-chat-bot
+   ```
+
+   If you already cloned without submodules:
+
+   ```bash
+   git submodule update --init --recursive
+   ```
 
    ```bash
    npm install
@@ -39,6 +50,8 @@ You can deploy your own version to Vercel by clicking the button below:
    # or
    pnpm install
    ```
+
+   **Vercel:** enable **Include Git Submodules** for this project (Project → Settings → Git). Otherwise production builds will not have `vendor/aumm-skill` and chat will return 503 when loading the corpus.
 
 2. Install the [Vercel CLI](https://vercel.com/docs/cli):
 

@@ -11,14 +11,28 @@ interface SuggestedPromptsProps {
 function PureSuggestedPrompts({ sendMessage }: SuggestedPromptsProps) {
   const suggestedActions = [
     {
-      title: "What are the advantages",
-      label: "of using Next.js?",
-      action: "What are the advantages of using Next.js?",
+      title: "How does AuMM issuance work?",
+      label: "Is it like Bitcoin mining?",
+      action:
+        "How does AuMM issuance work, and how is it different from Bitcoin mining?",
     },
     {
-      title: "What is the weather",
-      label: "in San Francisco?",
-      action: "What is the weather in San Francisco?",
+      title: "What is der Bodensee?",
+      label: "Composition and role in the protocol",
+      action:
+        "What is der Bodensee Pool: its token composition and role in Project Aureum?",
+    },
+    {
+      title: "Swap fee bands",
+      label: "Miliarium vs Bodensee defaults",
+      action:
+        "What are the immutable swap fee bands and genesis defaults for Miliarium pools vs der Bodensee?",
+    },
+    {
+      title: "Gauge vs composition challenge",
+      label: "Miliarium pools governance",
+      action:
+        "Can Miliarium Aureum pools be gauge-challenged? How do structural changes work?",
     },
   ];
 
