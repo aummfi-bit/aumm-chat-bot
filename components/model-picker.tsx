@@ -12,6 +12,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectItemText,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
@@ -51,6 +52,43 @@ function subtitleLine(opt: ModelsApiPayload["options"][number]): string {
     return opt.note;
   }
   return `Unavailable — ${opt.requirement ?? "needs server configuration"}`;
+}
+
+/** Single-line label for trigger + list (avoids multi-line Radix SelectValue). */
+function modelOptionOneLine(opt: ModelsApiPayload["options"][number]): string {
+  const short = shortStatusForModel(opt);
+  return `${opt.label} · ${short}`;
+}
+
+function shortStatusForModel(opt: ModelsApiPayload["options"][number]): string {
+  if (opt.selectable === false) {
+    return "AI Gateway (off)";
+  }
+  if (opt.note === "Checking server credential status…") {
+    return "Checking…";
+  }
+  if (opt.note === "Provisioning not verified (network error — check env on server)") {
+    return "Env not verified";
+  }
+  if (opt.available) {
+    if (
+      opt.note?.includes("GOOGLE_GENERATIVE_AI_API_KEY") ||
+      opt.note?.includes("Google Generative AI")
+    ) {
+      return "Google · key set";
+    }
+    if (opt.note === "Groq" || opt.note?.startsWith("Groq")) {
+      return "Groq";
+    }
+    return "Ready";
+  }
+  if (opt.requirement === "GROQ_API_KEY") {
+    return "needs GROQ_API_KEY";
+  }
+  if (opt.requirement === "GOOGLE_GENERATIVE_AI_API_KEY") {
+    return "needs GOOGLE_GENERATIVE_AI_API_KEY";
+  }
+  return opt.requirement ?? "Unavailable";
 }
 
 export const ModelPicker = ({
@@ -125,18 +163,18 @@ export const ModelPicker = ({
   const controlledValue = selectedResolvable ? selectedModel : firstSelectableId;
 
   return (
-    <div className="absolute bottom-2 left-2 flex flex-col gap-2 max-w-[min(100vw-2rem,460px)]">
+    <div className="absolute bottom-2 left-2 flex flex-col gap-2 max-w-[min(100vw-2rem,460px)] min-w-0">
       <Select
         value={controlledValue}
         onValueChange={(v) => setSelectedModel(v as modelID)}
       >
-        <SelectTrigger className="min-w-[14rem] max-w-[min(100vw-3rem,32rem)] h-auto py-2 text-left whitespace-normal [&_[data-slot=select-value]]:whitespace-normal">
+        <SelectTrigger className="min-w-[14rem] max-w-[min(100vw-3rem,32rem)] h-9 min-h-[2.25rem] py-0 text-left [&_[data-slot=select-value]]:min-w-0">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent className="min-w-[min(100vw-2rem,460px)] max-h-[70vh]">
           <SelectGroup>
             {displayChoices.map((choice) => {
-              const sub = subtitleLine(choice);
+              const line = modelOptionOneLine(choice);
               const pendingScan =
                 choice.note === "Checking server credential status…";
               const locked = choice.selectable === false;
@@ -151,31 +189,23 @@ export const ModelPicker = ({
                   key={choice.id}
                   value={choice.id}
                   disabled={disabled}
-                  textValue={`${choice.label} ${sub}`}
-                  className={cn(locked && "data-[disabled]:opacity-60")}
+                  textValue={`${choice.label} ${subtitleLine(choice)}`}
+                  className={cn(
+                    "min-w-0 items-center py-2",
+                    locked && "data-[disabled]:opacity-60",
+                  )}
                 >
-                  <div className="flex flex-col gap-0.5 py-1 pr-6 max-w-[min(100vw-4rem,28rem)]">
+                  <SelectItemText asChild>
                     <span
                       className={cn(
-                        "text-sm leading-snug whitespace-normal",
+                        "block w-full min-w-0 truncate text-left text-sm leading-tight",
+                        missingKey && "text-amber-700 dark:text-amber-400",
                         locked && "text-muted-foreground",
                       )}
                     >
-                      {choice.label}
+                      {line}
                     </span>
-                    <span
-                      className={cn(
-                        "text-xs leading-snug whitespace-normal",
-                        locked
-                          ? "text-muted-foreground/90"
-                          : missingKey
-                            ? "text-amber-600 dark:text-amber-400"
-                            : "text-muted-foreground",
-                      )}
-                    >
-                      {sub}
-                    </span>
-                  </div>
+                  </SelectItemText>
                 </SelectItem>
               );
             })}
