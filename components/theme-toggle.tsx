@@ -25,7 +25,7 @@ export function ThemeToggle() {
   const active =
     theme && THEMES.includes(theme as (typeof THEMES)[number])
       ? theme
-      : "au";
+      : "night";
 
   return (
     <div

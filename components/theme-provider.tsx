@@ -7,7 +7,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
       attribute="data-theme"
-      defaultTheme="au"
+      defaultTheme="night"
       themes={["au", "day", "night"]}
       enableSystem={false}
       disableTransitionOnChange

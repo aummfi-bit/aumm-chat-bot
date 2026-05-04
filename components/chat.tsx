@@ -35,7 +35,7 @@ export default function Chat() {
       <div className="flex min-h-0 flex-1 flex-col">
         {messages.length === 0 ? (
           <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
+            <div className="w-full px-4 sm:px-6 lg:px-8">
               <ProjectOverview />
             </div>
           </div>
@@ -49,7 +49,7 @@ export default function Chat() {
           sendMessage({ text: input }, { body: { selectedModel } });
           setInput("");
         }}
-        className="mx-auto w-full max-w-7xl shrink-0 bg-background px-4 pb-8 sm:px-8 pt-3"
+        className="w-full shrink-0 bg-background px-4 pb-8 pt-3 sm:px-6 lg:px-8"
       >
         {messages.length === 0 && (
           <ConversationStarters
