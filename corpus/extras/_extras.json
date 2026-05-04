@@ -1,0 +1,4 @@
+{
+  "description": "Optional chatbot-only supplementary paths merged with vendor/aumm-skill/references/_canon.json. Use the extras/ prefix; files live under corpus/extras/ and survive submodule bumps. Sagix essays ship in the submodule at references/sagix/*.md (listed in _canon.json)—do not duplicate them here.",
+  "files": []
+}
