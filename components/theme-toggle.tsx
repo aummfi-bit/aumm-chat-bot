@@ -16,7 +16,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <div
-        className="grid w-full max-w-[220px] grid-cols-3 rounded border border-border overflow-hidden h-9 shrink-0"
+        className="grid h-9 w-[220px] shrink-0 grid-cols-3 overflow-hidden rounded border border-border"
         aria-hidden
       />
     );
@@ -29,7 +29,7 @@ export function ThemeToggle() {
 
   return (
     <div
-      className="grid w-full max-w-[220px] grid-cols-3 rounded border border-border overflow-hidden shrink-0"
+      className="grid w-[220px] shrink-0 grid-cols-3 overflow-hidden rounded border border-border"
       role="group"
       aria-label="Theme"
     >

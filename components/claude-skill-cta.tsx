@@ -7,8 +7,9 @@ import { toast } from "sonner";
 const INSTALL_COMMAND =
   "git clone https://github.com/aummfi-bit/aumm-skill.git ~/.claude/skills/aumm-aureum";
 
+/** Standalone prompt for web Claude or when no local skill is installed. */
 const CLAUDE_PROMPT =
-  "Use the aumm-aureum skill to answer my next questions about Project Aureum (https://aumm.fi).";
+  "Answer my questions about Project Aureum (Aureum Protocol). Ground answers in https://aumm.fi and canonical material at https://github.com/aummfi-bit/aumm-skill. Prefer facts from those sources; say when you are uncertain.";
 
 async function copyText(text: string, successToast: string) {
   try {
@@ -91,18 +92,20 @@ export function ClaudeSkillCTA() {
             id={`${panelId}-title`}
             className="text-sm font-semibold text-foreground mb-2"
           >
-            Install the Aureum skill in Claude
+            Use Aureum with Claude
           </h2>
           <p className="text-xs text-muted-foreground mb-4 leading-snug">
-            Run the Aureum protocol assistant inside your own Claude with the
-            canonical aumm-skill.
+            Choose one option — you do not need both.
           </p>
 
           <div className="space-y-4">
-            <section>
+            <section aria-labelledby={`${panelId}-option-a`}>
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <span className="text-xs font-medium text-foreground">
-                  1. Paste into your terminal
+                <span
+                  id={`${panelId}-option-a`}
+                  className="text-xs font-medium text-foreground"
+                >
+                  Option A: Install the local Claude skill
                 </span>
                 <Button
                   ref={firstCopyRef}
@@ -116,18 +119,45 @@ export function ClaudeSkillCTA() {
                   Copy command
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground mb-2 leading-snug">
+                Paste into your terminal (Claude Desktop / CLI).
+              </p>
               <pre
                 className="font-mono text-xs sm:text-sm bg-secondary border border-border rounded-md p-3 select-all break-all whitespace-pre-wrap"
                 translate="no"
               >
                 {INSTALL_COMMAND}
               </pre>
+              <p className="text-xs text-muted-foreground mt-3 leading-snug">
+                After install, mention{" "}
+                <code className="font-mono">aumm-aureum</code> when you want
+                canon-grounded answers. Full repo:&nbsp;
+                <a
+                  href="https://github.com/aummfi-bit/aumm-skill"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-2"
+                >
+                  aummfi-bit/aumm-skill
+                </a>
+              </p>
+              <p className="text-xs text-muted-foreground/90 mt-2 leading-snug">
+                Local skills load from{" "}
+                <code className="font-mono">~/.claude/skills/</code> in Claude
+                Desktop / CLI. Claude on the web cannot read local files.
+              </p>
             </section>
 
-            <section>
+            <section
+              aria-labelledby={`${panelId}-option-b`}
+              className="border-t border-border pt-4"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <span className="text-xs font-medium text-foreground">
-                  2. Paste into a Claude chat
+                <span
+                  id={`${panelId}-option-b`}
+                  className="text-xs font-medium text-foreground"
+                >
+                  Option B: Paste a standalone Claude prompt
                 </span>
                 <Button
                   size="sm"
@@ -140,6 +170,10 @@ export function ClaudeSkillCTA() {
                   Copy prompt
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground mb-2 leading-snug">
+                Use this in any Claude chat (e.g. web) when you are not using a
+                local skill.
+              </p>
               <pre
                 className="font-mono text-xs sm:text-sm bg-secondary border border-border rounded-md p-3 select-all break-all whitespace-pre-wrap"
                 translate="no"
@@ -148,23 +182,6 @@ export function ClaudeSkillCTA() {
               </pre>
             </section>
           </div>
-
-          <p className="text-xs text-muted-foreground mt-4 leading-snug">
-            Then mention <code className="font-mono">aumm-aureum</code> whenever you
-            want canon-grounded answers. Full repo:&nbsp;
-            <a
-              href="https://github.com/aummfi-bit/aumm-skill"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline underline-offset-2"
-            >
-              aummfi-bit/aumm-skill
-            </a>
-          </p>
-          <p className="text-xs text-muted-foreground/90 mt-2 leading-snug">
-            Skills load from <code className="font-mono">~/.claude/skills/</code> —
-            Claude Desktop / CLI; Claude on the web cannot read local files.
-          </p>
         </div>
       ) : null}
     </div>

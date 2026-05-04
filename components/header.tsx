@@ -5,14 +5,14 @@ import { ThemeToggle } from "./theme-toggle";
 
 export const Header = () => {
   return (
-    <div className="fixed right-0 left-0 w-full top-0 bg-background/95 backdrop-blur-sm border-b border-border z-40">
-      <div className="flex justify-between items-center gap-3 p-4 flex-wrap">
-        <div className="flex flex-row items-center gap-2 shrink-0 min-w-0">
+    <header className="fixed inset-x-0 top-0 z-[1100] border-b border-border bg-background/95 backdrop-blur-sm">
+      <div className="mx-auto flex w-full max-w-7xl min-w-0 flex-nowrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex min-w-0 flex-1 flex-row items-center gap-2 sm:gap-4">
           <Link
             href="https://aumm.fi/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-row items-center gap-2.5 min-w-0 rounded-md outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="flex min-w-0 shrink-0 flex-row items-center gap-2.5 rounded-md outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <Image
               src="/images/aureum.jpeg"
@@ -26,12 +26,21 @@ export const Header = () => {
               AUREUM
             </span>
           </Link>
+          <Link
+            href="https://www.aumm.fi/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="VISIT https://www.aumm.fi for more info"
+            className="min-w-0 truncate text-xs text-muted-foreground transition-colors hover:text-primary sm:text-sm"
+          >
+            VISIT https://www.aumm.fi for more info
+          </Link>
         </div>
-        <div className="flex flex-row items-center gap-3 shrink-0 ml-auto">
+        <div className="ml-2 flex shrink-0 flex-row items-center gap-2 sm:ml-4 sm:gap-3">
           <ClaudeSkillCTA />
           <ThemeToggle />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
