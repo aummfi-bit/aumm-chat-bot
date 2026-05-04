@@ -2,7 +2,6 @@ import {
   GATEWAY_ANTHROPIC_HAIKU,
   GATEWAY_OPENAI_GPT54,
   GEMINI_2_5_FLASH_LITE,
-  gatewayProvider,
   isGeminiModelAvailable,
   LLAMA_3_3_70B_VERSATILE,
   META_LLAMA_4_SCOUT,
@@ -14,10 +13,6 @@ import type { ModelsApiPayload, ModelsApiOption } from "@/lib/models-contract";
 
 export const dynamic = "force-dynamic";
 
-function gatewayReady(): boolean {
-  return gatewayProvider() !== undefined;
-}
-
 function groqReady(): boolean {
   return Boolean(process.env.GROQ_API_KEY?.trim());
 }
@@ -25,7 +20,7 @@ function groqReady(): boolean {
 /** Server-side provisioning truth for picker + disabled `<SelectItem>`. */
 function describeModel(id: modelID): Pick<
   ModelsApiOption,
-  "available" | "requirement" | "note"
+  "available" | "selectable" | "requirement" | "note"
 > {
   switch (id) {
     case LLAMA_3_3_70B_VERSATILE:
@@ -51,18 +46,12 @@ function describeModel(id: modelID): Pick<
           };
     }
     case GATEWAY_OPENAI_GPT54:
-    case GATEWAY_ANTHROPIC_HAIKU: {
-      const ok = gatewayReady();
-      return ok
-        ? {
-            available: true,
-            note: "Vercel AI Gateway (`AI_GATEWAY_API_KEY` or OIDC token present)",
-          }
-        : {
-            available: false,
-            requirement: "AI_GATEWAY_API_KEY or VERCEL_OIDC_TOKEN (AI Gateway)",
-          };
-    }
+    case GATEWAY_ANTHROPIC_HAIKU:
+      return {
+        available: false,
+        selectable: false,
+        note: "Premium (AI Gateway) — not selectable in this app",
+      };
   }
 }
 

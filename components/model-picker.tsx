@@ -1,7 +1,12 @@
 "use client";
 
 import type { ModelsApiPayload } from "@/lib/models-contract";
-import { MODEL_OPTIONS_UI, defaultModel, type modelID } from "@/ai/providers";
+import {
+  MODEL_OPTIONS_UI,
+  defaultModel,
+  isGatewayPickerSlot,
+  type modelID,
+} from "@/ai/providers";
 import {
   Select,
   SelectContent,
@@ -10,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 
 interface ModelPickerProps {
@@ -18,17 +24,31 @@ interface ModelPickerProps {
 }
 
 function optimisticFallback(): ModelsApiPayload["options"] {
-  return MODEL_OPTIONS_UI().map(({ id, label }) => ({
-    id,
-    label,
-    available: true,
-    note: "Provisioning not verified (network error — check env on server)",
-  }));
+  return MODEL_OPTIONS_UI().map(({ id, label }) => {
+    if (isGatewayPickerSlot(id)) {
+      return {
+        id,
+        label,
+        available: false,
+        selectable: false,
+        note: "Premium (AI Gateway) — not selectable in this app",
+      };
+    }
+    return {
+      id,
+      label,
+      available: true,
+      note: "Provisioning not verified (network error — check env on server)",
+    };
+  });
 }
 
 function subtitleLine(opt: ModelsApiPayload["options"][number]): string {
-  if (opt.available) {
+  if (opt.available && opt.selectable !== false) {
     return opt.note ?? "Ready — credential check passed.";
+  }
+  if (opt.selectable === false && opt.note) {
+    return opt.note;
   }
   return `Unavailable — ${opt.requirement ?? "needs server configuration"}`;
 }
@@ -62,23 +82,39 @@ export const ModelPicker = ({
     };
   }, []);
 
-  const loadingScan = MODEL_OPTIONS_UI().map(({ id, label }) => ({
-    id,
-    label,
-    available: true as const,
-    note: "Checking server credential status…",
-  }));
+  const loadingScan = MODEL_OPTIONS_UI().map(({ id, label }) => {
+    if (isGatewayPickerSlot(id)) {
+      return {
+        id,
+        label,
+        available: false,
+        selectable: false as const,
+        note: "Premium (AI Gateway) — not selectable in this app",
+      };
+    }
+    return {
+      id,
+      label,
+      available: true as const,
+      note: "Checking server credential status…",
+    };
+  });
 
   /** Before first network result: scan UI. After fetch: server truth / optimistic fallback rows. */
   const displayChoices = loadedOptions ?? loadingScan;
 
   const firstSelectableId = useMemo((): modelID => {
-    const hit = displayChoices.find((c) => c.available);
+    const hit = displayChoices.find(
+      (c) => c.available && c.selectable !== false,
+    );
     return (hit?.id ?? defaultModel) as modelID;
   }, [displayChoices]);
 
   const selectedResolvable = displayChoices.some(
-    (c) => c.id === selectedModel && c.available === true,
+    (c) =>
+      c.id === selectedModel &&
+      c.available === true &&
+      c.selectable !== false,
   );
 
   useEffect(() => {
@@ -101,13 +137,14 @@ export const ModelPicker = ({
           <SelectGroup>
             {displayChoices.map((choice) => {
               const sub = subtitleLine(choice);
-              const muted =
-                choice.available === false || sub.includes("Unavailable");
               const pendingScan =
                 choice.note === "Checking server credential status…";
-              /** During scan all rows stay clickable; definitive server false disables Gemini/Gateway/etc. */
+              const locked = choice.selectable === false;
+              const missingKey =
+                !locked && !choice.available && !pendingScan;
               const disabled =
-                pendingScan ? false : choice.available !== true;
+                choice.selectable === false ||
+                (!pendingScan && choice.available !== true);
 
               return (
                 <SelectItem
@@ -115,17 +152,26 @@ export const ModelPicker = ({
                   value={choice.id}
                   disabled={disabled}
                   textValue={`${choice.label} ${sub}`}
+                  className={cn(locked && "data-[disabled]:opacity-60")}
                 >
                   <div className="flex flex-col gap-0.5 py-1 pr-6 max-w-[min(100vw-4rem,28rem)]">
-                    <span className="text-sm leading-snug whitespace-normal">
+                    <span
+                      className={cn(
+                        "text-sm leading-snug whitespace-normal",
+                        locked && "text-muted-foreground",
+                      )}
+                    >
                       {choice.label}
                     </span>
                     <span
-                      className={
-                        muted
-                          ? "text-xs text-amber-600 dark:text-amber-400 leading-snug whitespace-normal"
-                          : "text-xs text-muted-foreground leading-snug whitespace-normal"
-                      }
+                      className={cn(
+                        "text-xs leading-snug whitespace-normal",
+                        locked
+                          ? "text-muted-foreground/90"
+                          : missingKey
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-muted-foreground",
+                      )}
                     >
                       {sub}
                     </span>

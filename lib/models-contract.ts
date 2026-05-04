@@ -5,6 +5,8 @@ export type ModelsApiOption = {
   id: modelID;
   label: string;
   available: boolean;
+  /** When false, row is never selectable even if credentials exist (e.g. hidden premium tier). */
+  selectable?: boolean;
   requirement?: string;
   note?: string;
 };

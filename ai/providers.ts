@@ -62,6 +62,11 @@ function isPremiumGatewayBucket(id: modelID): id is PremiumGatewayBucketId {
   );
 }
 
+/** AI Gateway slots stay in the list for transparency but cannot be chosen in the UI. */
+export function isGatewayPickerSlot(id: modelID): boolean {
+  return isPremiumGatewayBucket(id);
+}
+
 export function isGeminiModelAvailable(): boolean {
   return Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim());
 }
@@ -79,9 +84,9 @@ export interface ModelChoiceUI {
 export function MODEL_OPTIONS_UI(): ModelChoiceUI[] {
   return [
     {
-      id: LLAMA_3_3_70B_VERSATILE,
-      label: "Llama 3.3 · 70B (Groq, default)",
-      subtitle: "Groq · status from `/api/models`",
+      id: GEMINI_2_5_FLASH_LITE,
+      label: "Gemini 2.5 · Flash‑Lite (default)",
+      subtitle: "Google · live status loads from `/api/models`",
     },
     {
       id: META_LLAMA_4_SCOUT,
@@ -89,19 +94,19 @@ export function MODEL_OPTIONS_UI(): ModelChoiceUI[] {
       subtitle: "Groq · high TPM quota",
     },
     {
-      id: GEMINI_2_5_FLASH_LITE,
-      label: "Gemini 2.5 · Flash‑Lite",
-      subtitle: "Google · live status loads from `/api/models`",
+      id: LLAMA_3_3_70B_VERSATILE,
+      label: "Llama 3.3 · 70B (Groq)",
+      subtitle: "Groq · status from `/api/models`",
     },
     {
       id: GATEWAY_OPENAI_GPT54,
       label: "OpenAI GPT‑5.4 · AI Gateway",
-      subtitle: "Premium · provisioning shown in picker",
+      subtitle: "Premium · not selectable here",
     },
     {
       id: GATEWAY_ANTHROPIC_HAIKU,
       label: "Anthropic Claude 3.5 Haiku · AI Gateway",
-      subtitle: "Premium · provisioning shown in picker",
+      subtitle: "Premium · not selectable here",
     },
   ];
 }
@@ -113,10 +118,10 @@ export function parseModelSelection(raw: string | undefined | null): modelID {
   if (typeof raw === "string" && ids.includes(raw)) {
     return raw as modelID;
   }
-  return LLAMA_3_3_70B_VERSATILE;
+  return GEMINI_2_5_FLASH_LITE;
 }
 
-export const defaultModel: modelID = LLAMA_3_3_70B_VERSATILE;
+export const defaultModel: modelID = GEMINI_2_5_FLASH_LITE;
 
 export function resolveLanguageModel(id: modelID): LanguageModel {
   if (isGroqModelId(id)) {
