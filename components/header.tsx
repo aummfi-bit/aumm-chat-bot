@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ClaudeSkillCTA } from "./claude-skill-cta";
 import { ThemeToggle } from "./theme-toggle";
 
 export const Header = () => {
@@ -27,6 +28,7 @@ export const Header = () => {
           </Link>
         </div>
         <div className="flex flex-row items-center gap-3 shrink-0 ml-auto">
+          <ClaudeSkillCTA />
           <ThemeToggle />
         </div>
       </div>
