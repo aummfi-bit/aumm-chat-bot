@@ -1,0 +1,3 @@
+[submodule "vendor/aumm-skill"]
+	path = vendor/aumm-skill
+	url = https://github.com/aummfi-bit/aumm-skill.git
