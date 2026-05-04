@@ -16,7 +16,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <div
-        className="flex w-full max-w-[220px] rounded border border-border overflow-hidden h-9 shrink-0"
+        className="grid w-full max-w-[220px] grid-cols-3 rounded border border-border overflow-hidden h-9 shrink-0"
         aria-hidden
       />
     );
@@ -29,7 +29,7 @@ export function ThemeToggle() {
 
   return (
     <div
-      className="flex w-full max-w-[220px] rounded border border-border overflow-hidden shrink-0"
+      className="grid w-full max-w-[220px] grid-cols-3 rounded border border-border overflow-hidden shrink-0"
       role="group"
       aria-label="Theme"
     >
@@ -38,7 +38,7 @@ export function ThemeToggle() {
           key={t}
           type="button"
           onClick={() => setTheme(t)}
-          className={`flex-1 px-2 py-2 text-[11px] uppercase tracking-wide transition-colors border-r border-border last:border-r-0 min-w-0 ${
+          className={`min-w-0 px-1.5 py-2 text-center text-[11px] uppercase tracking-wide transition-colors border-r border-border last:border-r-0 ${
             active === t
               ? "bg-primary text-primary-foreground"
               : "bg-transparent text-muted-foreground hover:text-primary"
