@@ -1,0 +1,44 @@
+name: Sync vendor/aumm-skill
+
+on:
+  repository_dispatch:
+    types: [aumm_skill_updated]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vendor-aumm-skill-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout aumm-chat-bot with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Update vendor/aumm-skill to latest remote
+        run: |
+          set -euo pipefail
+          git submodule update --init --recursive
+          git submodule update --remote vendor/aumm-skill
+          git add vendor/aumm-skill
+          if git diff --cached --quiet; then
+            echo "no submodule change — skipping"
+            exit 0
+          fi
+          BEFORE_SHA="$(git rev-parse HEAD)"
+          VENDOR_SHA="$(git -C vendor/aumm-skill rev-parse --short HEAD)"
+          SRC_REPO="${{ github.event.client_payload.source_repo || 'manual' }}"
+          CANON_SHA="${{ github.event.client_payload.canon_sha || 'manual' }}"
+          SKILL_SHA="${{ github.event.client_payload.skill_sha || 'manual' }}"
+          git config user.name "aumm-chat-bot-sync[bot]"
+          git config user.email "aumm-chat-bot-sync@users.noreply.github.com"
+          git commit -m "vendor: bump aumm-skill to ${VENDOR_SHA}" -m "source=${SRC_REPO} canon=${CANON_SHA} skill=${SKILL_SHA}"
+          git push origin HEAD:main
+          echo "pushed vendor/aumm-skill ${VENDOR_SHA} from ${BEFORE_SHA}"
